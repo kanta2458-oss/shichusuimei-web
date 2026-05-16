@@ -1,0 +1,8 @@
+services:
+  - type: static
+    name: shichusuimei-web
+    buildCommand: ""
+    staticPublishPath: .
+    envVars:
+      - key: VITE_GOOGLE_MAPS_API_KEY
+        sync: false
