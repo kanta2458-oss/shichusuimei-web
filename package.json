@@ -1,0 +1,26 @@
+{
+  "name": "shichusuimei-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:web": "vite build --config vite.config.mjs --configLoader native",
+    "chart": "npm.cmd run build && node dist/src/cli.js",
+    "dev": "vite --config vite.config.mjs --configLoader native",
+    "format:solar-terms": "npm.cmd run build && node scripts/format-solar-terms.mjs",
+    "preview": "vite preview --config vite.config.mjs --configLoader native",
+    "test": "npm.cmd run build && node --test dist/tests/*.test.js",
+    "test:coverage": "npm.cmd run build && node --test --experimental-test-coverage dist/tests/*.test.js"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.0"
+  }
+}
