@@ -19,10 +19,26 @@ import {
   type SavedChartHistoryItem
 } from "./history.js";
 
-function formatPillar(label: string, pillar: ChartResult["pillars"]["year"] | ChartResult["pillars"]["hour"]) {
-  if (!pillar) return { label, main: "時刻不明", meta: "" };
-  const meta = [`#${pillar.number}`, pillar.tenGod, pillar.twelveStage].filter(Boolean).join(" / ");
-  return { label, main: pillar.ganzhi, meta };
+type ChartPillarKey = "hour" | "day" | "month" | "year";
+
+function formatPillar(
+  label: string,
+  key: ChartPillarKey,
+  pillar: ChartResult["pillars"]["year"] | ChartResult["pillars"]["hour"],
+  hiddenStem?: string,
+  hiddenTenGod?: string
+) {
+  return {
+    label,
+    key,
+    number: pillar ? `#${pillar.number}` : "-",
+    stem: pillar?.stem ?? "-",
+    branch: pillar?.branch ?? "-",
+    hiddenStem: hiddenStem ?? "-",
+    tenGod: pillar?.tenGod ?? "-",
+    hiddenTenGod: hiddenTenGod ?? "-",
+    twelveStage: pillar?.twelveStage ?? "-"
+  };
 }
 
 function makeHistoryItem(input: ChartInput, chart: ChartResult): SavedChartHistoryItem {
@@ -107,12 +123,24 @@ export function App() {
     setChart(calculateChart(item.input));
   }
 
+  const hiddenStemMap: Partial<Record<ChartPillarKey, { stem: string; tenGod: string }>> = chart
+    ? chart.powerScore.hiddenStemContributions.reduce<Partial<Record<ChartPillarKey, { stem: string; tenGod: string }>>>(
+        (map, contribution) => ({
+          ...map,
+          [contribution.pillar]: {
+            stem: contribution.stem,
+            tenGod: contribution.tenGod
+          }
+        }),
+        {}
+      )
+    : {};
   const pillars = chart
     ? [
-        formatPillar("年柱", chart.pillars.year),
-        formatPillar("月柱", chart.pillars.month),
-        formatPillar("日柱", chart.pillars.day),
-        formatPillar("時柱", chart.pillars.hour)
+        formatPillar("時柱", "hour", chart.pillars.hour, hiddenStemMap.hour?.stem, hiddenStemMap.hour?.tenGod),
+        formatPillar("日柱", "day", chart.pillars.day, hiddenStemMap.day?.stem, hiddenStemMap.day?.tenGod),
+        formatPillar("月柱", "month", chart.pillars.month, hiddenStemMap.month?.stem, hiddenStemMap.month?.tenGod),
+        formatPillar("年柱", "year", chart.pillars.year, hiddenStemMap.year?.stem, hiddenStemMap.year?.tenGod)
       ]
     : [];
 
@@ -205,15 +233,78 @@ export function App() {
 
           {chart ? (
             <>
-              <div className="pillar-grid">
-                {pillars.map((pillar) => (
-                  <div className="pillar-cell" key={pillar.label}>
-                    <span>{pillar.label}</span>
-                    <strong>{pillar.main}</strong>
-                    <small>{pillar.meta}</small>
+              <section className="paper-chart" aria-label="命式表">
+                <div className="paper-chart-header">
+                  <h3>命式表</h3>
+                  <span>{chart.input.birthPlace.label}</span>
+                </div>
+                <div className="paper-chart-table" role="table">
+                  <div className="paper-chart-row paper-chart-column-labels" role="row">
+                    <div className="paper-chart-row-label" role="columnheader"></div>
+                    {pillars.map((pillar) => (
+                      <div className="paper-chart-cell paper-chart-column-title" role="columnheader" key={pillar.key}>
+                        {pillar.label}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <div className="paper-chart-row paper-chart-small-row" role="row">
+                    <div className="paper-chart-row-label" role="rowheader">干支番号</div>
+                    {pillars.map((pillar) => (
+                      <div className="paper-chart-cell" role="cell" key={`${pillar.key}-number`}>
+                        {pillar.number}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="paper-chart-row paper-chart-main-row" role="row">
+                    <div className="paper-chart-row-label" role="rowheader">天干</div>
+                    {pillars.map((pillar) => (
+                      <div className="paper-chart-cell paper-chart-kan" role="cell" key={`${pillar.key}-stem`}>
+                        {pillar.stem}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="paper-chart-row paper-chart-main-row" role="row">
+                    <div className="paper-chart-row-label" role="rowheader">地支</div>
+                    {pillars.map((pillar) => (
+                      <div className="paper-chart-cell paper-chart-kan" role="cell" key={`${pillar.key}-branch`}>
+                        {pillar.branch}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="paper-chart-row" role="row">
+                    <div className="paper-chart-row-label" role="rowheader">蔵干</div>
+                    {pillars.map((pillar) => (
+                      <div className="paper-chart-cell" role="cell" key={`${pillar.key}-hidden-stem`}>
+                        {pillar.hiddenStem}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="paper-chart-row" role="row">
+                    <div className="paper-chart-row-label" role="rowheader">通変星</div>
+                    {pillars.map((pillar) => (
+                      <div className="paper-chart-cell" role="cell" key={`${pillar.key}-ten-god`}>
+                        {pillar.tenGod}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="paper-chart-row" role="row">
+                    <div className="paper-chart-row-label" role="rowheader">蔵干通変</div>
+                    {pillars.map((pillar) => (
+                      <div className="paper-chart-cell" role="cell" key={`${pillar.key}-hidden-ten-god`}>
+                        {pillar.hiddenTenGod}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="paper-chart-row" role="row">
+                    <div className="paper-chart-row-label" role="rowheader">十二運</div>
+                    {pillars.map((pillar) => (
+                      <div className="paper-chart-cell" role="cell" key={`${pillar.key}-twelve-stage`}>
+                        {pillar.twelveStage}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
 
               <div className="metrics">
                 <div><span>空亡</span><strong>{chart.voidBranches}</strong></div>
