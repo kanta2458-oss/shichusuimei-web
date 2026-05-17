@@ -6,3 +6,4 @@ data/reference-cases.local.json
 data/reference-cases.json
 .env.local
 .env.*.local
+runtime-config.js

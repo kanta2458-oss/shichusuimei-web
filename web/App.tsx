@@ -19,6 +19,14 @@ import {
   type SavedChartHistoryItem
 } from "./history.js";
 
+declare global {
+  interface Window {
+    __SHICHUSUIMEI_CONFIG__?: {
+      googleMapsApiKey?: string;
+    };
+  }
+}
+
 type ChartPillarKey = "hour" | "day" | "month" | "year";
 
 function formatPillar(
@@ -58,7 +66,8 @@ export function App() {
   const [addressQuery, setAddressQuery] = useState("岡山県岡山市南区千鳥町");
   const [addressResults, setAddressResults] = useState<GeocodingResult[]>([]);
   const [addressStatus, setAddressStatus] = useState("");
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
+  const googleMapsApiKey =
+    window.__SHICHUSUIMEI_CONFIG__?.googleMapsApiKey || (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined);
   const geocodingProvider = useMemo(() => new GoogleMapsGeocodingProvider(), []);
 
   useEffect(() => {

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "build:web": "vite build --config vite.config.mjs --configLoader native",
+    "build:web": "vite build --config vite.config.mjs --configLoader native && node scripts/write-runtime-config.mjs",
     "chart": "npm.cmd run build && node dist/src/cli.js",
     "dev": "vite --config vite.config.mjs --configLoader native",
     "format:solar-terms": "npm.cmd run build && node scripts/format-solar-terms.mjs",
