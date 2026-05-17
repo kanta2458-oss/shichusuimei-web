@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { calculateChart } from "../src/index.js";
 import type { ChartInput, ChartResult, Gender } from "../src/index.js";
 import {
+  buildNotionTemplate,
   defaultChartFormState,
   formatSpecialStarBasis,
   formatSpecialStarPillars,
@@ -66,6 +67,7 @@ export function App() {
   const [addressQuery, setAddressQuery] = useState("岡山県岡山市南区千鳥町");
   const [addressResults, setAddressResults] = useState<GeocodingResult[]>([]);
   const [addressStatus, setAddressStatus] = useState("");
+  const [exportStatus, setExportStatus] = useState("");
   const googleMapsApiKey =
     window.__SHICHUSUIMEI_CONFIG__?.googleMapsApiKey || (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined);
   const geocodingProvider = useMemo(() => new GoogleMapsGeocodingProvider(), []);
@@ -130,6 +132,22 @@ export function App() {
       useLocationCorrection: item.input.useLocationCorrection
     });
     setChart(calculateChart(item.input));
+  }
+
+  function savePdf() {
+    window.print();
+  }
+
+  async function copyNotionTemplate() {
+    if (!chart) return;
+    const template = buildNotionTemplate(chart);
+
+    try {
+      await window.navigator.clipboard.writeText(template);
+      setExportStatus("Notion用テンプレートをコピーしました");
+    } catch {
+      setExportStatus("コピーできませんでした。ブラウザの権限を確認してください。");
+    }
   }
 
   const hiddenStemMap: Partial<Record<ChartPillarKey, { stem: string; tenGod: string }>> = chart
@@ -242,6 +260,12 @@ export function App() {
 
           {chart ? (
             <>
+              <div className="export-actions">
+                <button type="button" onClick={savePdf}>PDF保存</button>
+                <button type="button" onClick={copyNotionTemplate}>Notionテンプレートをコピー</button>
+                {exportStatus && <span>{exportStatus}</span>}
+              </div>
+
               <section className="paper-chart" aria-label="命式表">
                 <div className="paper-chart-header">
                   <h3>命式表</h3>

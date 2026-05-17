@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { calculateChart } from "../src/index.js";
 import {
+  buildNotionTemplate,
   defaultChartFormState,
   formatSpecialStarBasis,
   formatSpecialStarPillars,
@@ -103,6 +104,18 @@ describe("web support modules", () => {
     assert.equal(formatSpecialStarBasis("yearDayBranch"), "年支・日支");
     assert.equal(formatSpecialStarBasis("pillarGanzhi"), "干支");
     assert.equal(formatSpecialStarPillars(["year", "day", "hour"]), "年柱・日柱・時柱");
+  });
+
+  it("builds a Notion-ready markdown template from a chart", () => {
+    const chart = calculateChart(formStateToChartInput(defaultChartFormState()));
+    const template = buildNotionTemplate(chart);
+
+    assert.equal(template.includes("# 四柱推命 鑑定メモ"), true);
+    assert.equal(template.includes("- 生年月日: 2000-05-08"), true);
+    assert.equal(template.includes("| 年柱 | 庚辰 | #17 | 偏財 | 冠帯 | 庚/辰 |"), true);
+    assert.equal(template.includes("- 空亡: 戌亥"), true);
+    assert.equal(template.includes("- 守護神: 乙・庚"), true);
+    assert.equal(template.includes("## 鑑定メモ"), true);
   });
 
   it("builds a Google Maps script URL without embedding user input", () => {

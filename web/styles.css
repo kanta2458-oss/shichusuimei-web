@@ -172,6 +172,26 @@ select {
   text-align: left;
 }
 
+.export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.export-actions button {
+  min-height: 38px;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-weight: 700;
+}
+
+.export-actions span {
+  color: #4f4942;
+  font-size: 0.9rem;
+}
+
 .metrics span {
   color: #68635d;
   font-size: 0.85rem;
@@ -376,5 +396,92 @@ select {
 
   .paper-chart-table {
     min-width: 430px;
+  }
+}
+
+@media print {
+  :root {
+    background: #ffffff;
+    color: #000000;
+    font-size: 12px;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+  body {
+    min-width: 0;
+    background: #ffffff;
+  }
+
+  .app-shell {
+    display: block;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .workspace {
+    display: block;
+  }
+
+  .input-panel,
+  .history-panel,
+  .export-actions {
+    display: none;
+  }
+
+  .panel {
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    background: #ffffff;
+  }
+
+  .panel-header {
+    margin-bottom: 10px;
+  }
+
+  .paper-chart-table {
+    border-top-color: #000000;
+    border-left-color: #000000;
+  }
+
+  .paper-chart-row-label,
+  .paper-chart-cell {
+    border-color: #000000;
+    min-height: 34px;
+    padding: 4px 6px;
+  }
+
+  .paper-chart-main-row .paper-chart-cell {
+    min-height: 50px;
+  }
+
+  .paper-chart-kan {
+    font-size: 1.55rem;
+  }
+
+  .metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 10px 0;
+  }
+
+  .special-stars-section,
+  .annual-fortunes-section {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .annual-fortunes-table th,
+  .annual-fortunes-table td,
+  .special-stars-table th,
+  .special-stars-table td,
+  .luck-table th,
+  .luck-table td {
+    padding: 4px 6px;
+    border-color: #000000;
   }
 }
