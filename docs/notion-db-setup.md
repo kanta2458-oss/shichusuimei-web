@@ -148,6 +148,17 @@ Notion側のDBができたら、Webアプリに本実装します。
 - 保存後のNotionページURL表示
 - 保存失敗時のエラー表示
 
+## 作成済みDB ID
+
+2026-05-18 にNotion上へMVP用DBを作成済み。
+
+| DB | Database URL | Data Source ID |
+|---|---|---|
+| 鑑定対象DB | `https://www.notion.so/82bb56cf39654b268a43445326c6bc85` | `69050029-9a59-493c-ab7e-2640f5adb3fa` |
+| 命式DB | `https://www.notion.so/2039c72942c44330828528296d7a09a1` | `c6392179-6a4c-4670-a548-f0cc6087a8f6` |
+
+RenderにはNotionのAPIで使うDatabase IDとして、必要に応じて上記のDatabase URLまたはData Source IDを設定する。
+
 ## 注意
 
 - NotionトークンをGitHubやブラウザに入れない。
